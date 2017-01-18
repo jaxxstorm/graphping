@@ -4,9 +4,9 @@ import (
 	"../config"
 	"errors"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/cactus/go-statsd-client/statsd"
 	"github.com/tatsushid/go-fastping"
-	"log"
 	"net"
 	"time"
 )
@@ -53,19 +53,19 @@ func RunPinger(interval int, statsdClient statsd.Statter, group config.TargetGro
 
 	//determine what interval we should run at
 	if group.Interval > 0 {
-		log.Printf("Group Interval defined: %v", group.Interval)
+		log.Debug(fmt.Sprintf("Group Interval defined: %v", group.Interval))
 		p.MaxRTT = time.Duration(group.Interval) * time.Second
 	} else if interval > 0 {
-		log.Printf("Global interval defined: %v", interval)
+		log.Debug(fmt.Sprintf("Global Interval defined: %v", interval))
 		p.MaxRTT = time.Duration(interval) * time.Second
 	} else {
-		log.Printf("Using default interval: 60")
+		log.Debug(fmt.Sprintf("Using Default Interval: 60"))
 		p.MaxRTT = 60 * time.Second
 	}
 
 	// set the metric path
 	metricPath := fmt.Sprintf("%s", group.Prefix)
-
+	log.Info("Starting pinger for ", group.Name, " with metric path: ", metricPath)
 	p.RunLoop()
 
 pingloop:
@@ -79,20 +79,20 @@ pingloop:
 			for host, r := range results {
 				outputLabel := index[host]
 				if r == nil {
-					fmt.Printf("%s.%s : unreachable\n", metricPath, outputLabel)
+					log.Debug(fmt.Sprintf("%s : unreachable", outputLabel))
 					// send a metric for a failed ping
-					err := statsdClient.Inc(fmt.Sprintf("%s.%s.failed", metricPath, outputLabel), 1, 1)
+					err := statsdClient.Inc(fmt.Sprintf("%s.failed", outputLabel), 1, 1)
 					if err != nil {
-						log.Printf("Error sending metric: %+v", err)
+						log.Error(fmt.Sprintf("Error sending metric: %+v", err))
 					}
 				} else {
-					fmt.Printf("%s.%s : %v\n", metricPath, outputLabel, r.rtt)
+					log.Debug(fmt.Sprintf("%s : %v", outputLabel, r.rtt))
 					// send a zeroed failed metric, because we succeeded!
-					err := statsdClient.Inc(fmt.Sprintf("%s.%s.failed", metricPath, outputLabel), 0, 1)
+					err := statsdClient.Inc(fmt.Sprintf("%s.failed", outputLabel), 0, 1)
 					if err != nil {
-						log.Printf("Error sending metric: %+v", err)
+						log.Error(fmt.Sprintf("Error sending metric: %+v", err))
 					}
-					err = statsdClient.TimingDuration(fmt.Sprintf("%s.%s.timer", metricPath, outputLabel), r.rtt, 1)
+					err = statsdClient.TimingDuration(fmt.Sprintf("%s.timer", outputLabel), r.rtt, 1)
 				}
 				results[host] = nil
 			}
