@@ -4,13 +4,24 @@ import (
 	"./config"
 	"./ping"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/cactus/go-statsd-client/statsd"
 	"gopkg.in/urfave/cli.v1"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 )
+
+func init() {
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr, could also be a file.
+	log.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	log.SetLevel(log.InfoLevel)
+}
 
 func main() {
 
@@ -19,6 +30,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "config-file, c", Usage: "Path to configuration file"},
 		cli.StringFlag{Name: "statsd, s", Usage: "Address of statsd listener"},
+		cli.BoolFlag{Name: "verbose", Usage: "Output metrics in logs"},
 	}
 
 	app.Name = "graph-ping"
@@ -43,6 +55,11 @@ func main() {
 			return cli.NewExitError("Error: No statsd client specified", -1)
 		}
 
+		// if debug flag is set, override loglevel:
+		if c.Bool("verbose") {
+			log.SetLevel(log.DebugLevel)
+		}
+
 		// if we can't parse it, error
 		config, err := config.Parse(c.String("config-file"))
 		if err != nil {
@@ -53,6 +70,7 @@ func main() {
 			// create a statsdClient
 
 			statsdClient, err := statsd.NewClient(c.String("statsd"), config.Prefix)
+			log.Debug("Global StatsD Prefix: ", config.Prefix)
 
 			// Issues opening statsd
 			if err != nil {
@@ -76,7 +94,7 @@ func main() {
 
 			go func() {
 				for sig := range c {
-					log.Printf("captured %v. ", sig)
+					log.Warn(fmt.Sprintf("captured %v", sig))
 					done <- true
 				}
 			}()

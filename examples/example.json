@@ -3,7 +3,7 @@
   "prefix": "graphping",
   "target_group": [
     {
-      "first": [
+      "search_engines": [
         {
           "interval": 2,
           "prefix": "search",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "second": [
+      "news_sites": [
         {
           "prefix": "uk",
           "target": [
