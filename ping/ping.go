@@ -20,7 +20,6 @@ func RunPinger(interval int, statsdClient statsd.Statter, group config.TargetGro
 
 	// create a new pinger
 	p := fastping.NewPinger()
-	p.Network("udp")
 
 	// create some interfaces to store results
 	results := make(map[string]*response)
@@ -29,6 +28,7 @@ func RunPinger(interval int, statsdClient statsd.Statter, group config.TargetGro
 	// loop througb the targets in the struct and resolve the address
 	for _, target := range group.Targets {
 		ra, err := net.ResolveIPAddr("ip4:icmp", target.Address)
+		log.Debug(fmt.Sprintf("Target %s resolves to %s", target.Address, ra))
 		if err != nil {
 			return errors.New(fmt.Sprintf("Can't resolve %s", target.Address))
 		}
