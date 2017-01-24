@@ -33,7 +33,7 @@ func main() {
 		cli.BoolFlag{Name: "verbose", Usage: "Output metrics in logs"},
 	}
 
-	app.Name = "graph-ping"
+	app.Name = "graphping"
 	app.Version = "0.1"
 	app.Usage = "Ping a lost of endpoints and send the resulting metrics to statsd"
 	app.Authors = []cli.Author{

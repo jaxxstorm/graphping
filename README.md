@@ -6,7 +6,7 @@ Graphping is a tool to ping a list of endpoints and send the results to [statsd]
 
 It allows you to create graphs of latency in a similar manner to [smokeping](http://oss.oetiker.ch/smokeping/)
 
-![](http://i.imgur.com/fEuGmTn.png))
+![](http://i.imgur.com/fEuGmTn.png)
 
 Graphping is written in Go and takes advantages of many of Go's features:
 
@@ -45,7 +45,7 @@ GLOBAL OPTIONS:
 
 ### Config File
 
-Graphping requires a config file declaring the endpoints you wish to ping. The config format is [hcl](https://github.com/hashicorp/hcl) meaning you can either provide a humand readable HCL config file or a JSON config file. An example HCL file looks like this:
+Graphping requires a config file declaring the endpoints you wish to ping. The config format is [hcl](https://github.com/hashicorp/hcl) meaning you can either provide a human readable HCL config file or a JSON config file. An example HCL file looks like this:
 
 ```
 interval = 10 # A global interval. Can be overwritten per target group
