@@ -107,7 +107,7 @@ go build main.go
 
 ## Important Notes
 
-* I am still learning Go, so there may be some absolute nonsense in here. Pull requests are very welcomne
+* I am still learning Go, so there may be some absolute nonsense in here. Pull requests are very welcome
 
 ## Acknowledgements
 
