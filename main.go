@@ -1,11 +1,11 @@
 package main
 
 import (
-	"./config"
-	"./ping"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/cactus/go-statsd-client/statsd"
+	"github.com/jaxxstorm/graphping/config"
+	"github.com/jaxxstorm/graphping/ping"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 	"os/signal"
