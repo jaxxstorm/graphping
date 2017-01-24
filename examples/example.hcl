@@ -2,7 +2,7 @@ interval = 10
 prefix = "graphping"
 
 
-target_group "search_enginers" {
+target_group "search_engines" {
   interval = 2
   prefix = "search"
   target "google" {
