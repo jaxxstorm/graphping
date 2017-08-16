@@ -1,0 +1,18 @@
+package: .
+import:
+- package: github.com/Sirupsen/logrus
+  version: ^1.0.3
+- package: github.com/cactus/go-statsd-client
+  version: ^3.1.0
+  subpackages:
+  - statsd
+- package: github.com/hashicorp/go-multierror
+- package: github.com/hashicorp/hcl
+- package: github.com/jaxxstorm/graphping
+  version: ^0.1.0
+  subpackages:
+  - config
+  - ping
+- package: github.com/tatsushid/go-fastping
+- package: gopkg.in/urfave/cli.v1
+  version: ^1.20.0

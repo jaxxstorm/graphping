@@ -88,18 +88,11 @@ graphping -c /path/to/config/file.hcl -s 127.0.0.1:8125
 
 ## Building
 
-Currently building it is a bit crude. Simply set your `$GOPATH`: https://github.com/golang/go/wiki/GOPATH
+The project uses [glide](https://glide.sh) for dependencies. So:
 
-Grab the external dependencies:
+Install it into your [gopath](https://github.com/golang/go/wiki/GOPATH) and then run `glide install`
 
-```
-go get gopkg.in/urfave/cli.v1
-go get github.com/Sirupsen/logrus
-go get github.com/cactus/go-statsd-client/statsd
-go get github.com/tatsushid/go-fastping
-```
-
-and then build it:
+From here, you can build it:
 
 ```
 go build main.go
