@@ -21,7 +21,7 @@ Graphping requires a few options to run. Here's the basic usage:
 
 ```
 NAME:
-   graph-ping - Ping a lost of endpoints and send the resulting metrics to statsd
+   graph-ping - Ping a list of endpoints and send the resulting metrics to statsd
 
 USAGE:
    main [global options] command [command options] [arguments...]
@@ -84,7 +84,7 @@ For example:
 
 ```
 graphping -c /path/to/config/file.hcl -s 127.0.0.1:8125
-``` 
+```
 
 ## Building
 
