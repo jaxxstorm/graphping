@@ -35,7 +35,7 @@ func main() {
 
 	app.Name = "graphping"
 	app.Version = "0.1"
-	app.Usage = "Ping a lost of endpoints and send the resulting metrics to statsd"
+	app.Usage = "Ping a list of endpoints and send the resulting metrics to statsd"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name: "Lee Briggs",
