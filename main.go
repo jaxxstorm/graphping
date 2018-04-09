@@ -80,17 +80,22 @@ func main() {
 			// defer till later
 			defer statsdClient.Close()
 
+			done := make(chan bool, 1)
+
 			// loop through the groups and start a goroutine
 			// for each group to ping the targets
 			for _, groups := range config.Groups {
-				go ping.RunPinger(config.Interval, statsdClient, groups)
+				go func() {
+					pingres := ping.RunPinger(config.Interval, statsdClient, groups)
+					log.Warn(fmt.Sprintf("Pinger exited: %s", pingres))
+					done <- true
+				}()
 			}
 
 			// channel handling for interrupting app
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
 			signal.Notify(c, syscall.SIGTERM)
-			done := make(chan bool, 1)
 
 			go func() {
 				for sig := range c {
