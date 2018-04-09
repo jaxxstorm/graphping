@@ -98,7 +98,7 @@ pingloop:
 			}
 		case <-p.Done():
 			if err := p.Err(); err != nil {
-				return errors.New("Can't start pinger")
+				return fmt.Errorf("Can't start pinger: %s", err)
 			}
 			break pingloop
 		}
