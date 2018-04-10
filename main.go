@@ -4,7 +4,7 @@ import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/cactus/go-statsd-client/statsd"
-	"github.com/jaxxstorm/graphping/config"
+	configpkg "github.com/jaxxstorm/graphping/config"
 	"github.com/jaxxstorm/graphping/ping"
 	"gopkg.in/urfave/cli.v1"
 	"os"
@@ -61,7 +61,7 @@ func main() {
 		}
 
 		// if we can't parse it, error
-		config, err := config.Parse(c.String("config-file"))
+		config, err := configpkg.Parse(c.String("config-file"))
 		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("Error: Unable to parse config file - %s", err), -1)
 		} else {
@@ -85,11 +85,11 @@ func main() {
 			// loop through the groups and start a goroutine
 			// for each group to ping the targets
 			for _, groups := range config.Groups {
-				go func() {
-					pingres := ping.RunPinger(config.Interval, statsdClient, groups)
+				go func(group configpkg.TargetGroups) {
+					pingres := ping.RunPinger(config.Interval, statsdClient, group)
 					log.Warn(fmt.Sprintf("Pinger exited: %s", pingres))
 					done <- true
-				}()
+				}(groups)
 			}
 
 			// channel handling for interrupting app
