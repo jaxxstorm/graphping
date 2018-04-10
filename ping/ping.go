@@ -16,7 +16,7 @@ type response struct {
 	rtt  time.Duration
 }
 
-func RunPinger(interval int, statsdClient statsd.Statter, group config.TargetGroups) error {
+func RunPinger(interval int, prefix string, statsdClient statsd.Statter, group config.TargetGroups) error {
 
 	// create a new pinger
 	p := fastping.NewPinger()
@@ -63,9 +63,12 @@ func RunPinger(interval int, statsdClient statsd.Statter, group config.TargetGro
 		p.MaxRTT = 60 * time.Second
 	}
 
+	if (group.Prefix != "") {prefix = group.Prefix}
+
 	// set the metric path
-	metricPath := fmt.Sprintf("%s", group.Prefix)
+	metricPath := fmt.Sprintf("%s", prefix)
 	log.Info("Starting pinger for ", group.Name, " with metric path: ", metricPath)
+	if (prefix != "") {prefix = prefix + "."};
 	p.RunLoop()
 
 pingloop:
@@ -81,18 +84,18 @@ pingloop:
 				if r == nil {
 					log.Debug(fmt.Sprintf("%s : unreachable", outputLabel))
 					// send a metric for a failed ping
-					err := statsdClient.Inc(fmt.Sprintf("%s.failed", outputLabel), 1, 1)
+					err := statsdClient.Inc(fmt.Sprintf("%s%s.failed", prefix, outputLabel), 1, 1)
 					if err != nil {
 						log.Error(fmt.Sprintf("Error sending metric: %+v", err))
 					}
 				} else {
 					log.Debug(fmt.Sprintf("%s : %v", outputLabel, r.rtt))
 					// send a zeroed failed metric, because we succeeded!
-					err := statsdClient.Inc(fmt.Sprintf("%s.failed", outputLabel), 0, 1)
+					err := statsdClient.Inc(fmt.Sprintf("%s%s.failed", prefix, outputLabel), 0, 1)
 					if err != nil {
 						log.Error(fmt.Sprintf("Error sending metric: %+v", err))
 					}
-					err = statsdClient.TimingDuration(fmt.Sprintf("%s.timer", outputLabel), r.rtt, 1)
+					err = statsdClient.TimingDuration(fmt.Sprintf("%s%s.timer", prefix, outputLabel), r.rtt, 1)
 				}
 				results[host] = nil
 			}
