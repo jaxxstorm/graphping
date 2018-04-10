@@ -69,8 +69,7 @@ func main() {
 			// everything is fine, let's start pinging!
 			// create a statsdClient
 
-			statsdClient, err := statsd.NewClient(c.String("statsd"), config.Prefix)
-			log.Debug("Global StatsD Prefix: ", config.Prefix)
+			statsdClient, err := statsd.NewClient(c.String("statsd"), "")
 
 			// Issues opening statsd
 			if err != nil {
@@ -86,7 +85,7 @@ func main() {
 			// for each group to ping the targets
 			for _, groups := range config.Groups {
 				go func(group configpkg.TargetGroups) {
-					pingres := ping.RunPinger(config.Interval, statsdClient, group)
+					pingres := ping.RunPinger(config.Interval, config.Prefix, statsdClient, group)
 					log.Warn(fmt.Sprintf("Pinger exited: %s", pingres))
 					done <- true
 				}(groups)
